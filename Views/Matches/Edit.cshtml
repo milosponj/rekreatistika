@@ -1,0 +1,60 @@
+﻿@model Rekreatistika.Models.LeagueViewModels.CreateMatchViewModel
+
+@{
+    ViewData["Title"] = "Izmijeni meč";
+}
+
+<h2>Izmijeni meč</h2>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <input type="hidden" asp-for="LeagueId" />
+            @Html.ValidationMessage("SameTeamsError")
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Id" />
+            <input type="hidden" asp-for="LeagueId" />
+            <div class="form-group">
+                <label asp-for="HomeTeamId" class="control-label">Domaći tim</label>
+                <select asp-for="HomeTeamId" class="form-control" asp-items="@Model.TeamsSelectList"></select>
+                <span asp-validation-for="HomeTeamId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="AwayTeamId" class="control-label">Gostujući tim</label>
+                <select asp-for="AwayTeamId" class="form-control" asp-items="@Model.TeamsSelectList"></select>
+                <span asp-validation-for="AwayTeamId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label>Datum utakmice</label>
+                <input class="flatpickr" asp-for="Time" type="text" placeholder="Odaberi datum.." readonly="readonly" id="date-of-match">
+                <span asp-validation-for="Time" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="HomeGoalsCount" class="control-label">Broj golova domaćina</label>
+                <input asp-for="HomeGoalsCount" class="form-control" />
+                <span asp-validation-for="HomeGoalsCount" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="AwayGoalsCount" class="control-label">Broj golova gosta</label>
+                <input asp-for="AwayGoalsCount" class="form-control" />
+                <span asp-validation-for="AwayGoalsCount" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Sačuvaj izmjene" class="btn btn-default" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a href=@Url.Action("Details", "Leagues", new {id = @Model.LeagueId})>Vrati se nazad</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script>
+        $("#date-of-match").flatpickr();
+    </script>
+}

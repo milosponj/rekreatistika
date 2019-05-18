@@ -1,0 +1,56 @@
+@using Microsoft.AspNetCore.Identity
+@using PostgreSqlDotnetCore.Models
+@using Rekreatistika.Models
+
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+
+@if (SignInManager.IsSignedIn(User))
+{
+    <nav class="left">
+        <a href="#menu"><span>Menu</span></a>
+        <span><a style="color:white" href="@Url.Action("MyStatistics","Account")">@UserManager.GetUserName(User)</a></span>
+    </nav>
+    <a href=@Url.Action("Index", "Home") class="logo">REKREATISTIKA</a>
+    
+    <nav class="right">
+        <form asp-controller="Account" asp-action="Logout" method="post">
+            <button type="submit" class="button alt">Izloguj se</button>
+        </form>
+    </nav>
+
+   <!-- Menu -->
+    <nav id="menu">
+        <ul class="links">
+            <li><a href=@Url.Action("About", "Home")>O stranici</a></li>
+            <li><a class="button alt" href=@Url.Action("MyStatistics", "Account")>Moja Rek.</a></li>
+        </ul>
+        <ul class="actions vertical">
+            <form asp-controller="Account" asp-action="Logout" method="post">
+                <button type="submit" class="button alt">Izloguj se</button>
+            </form>
+        </ul>
+        
+    </nav>
+}
+
+else
+{
+    <nav class="left">
+        <a href="#menu"><span>Menu</span></a>
+    </nav>
+    <a href=@Url.Action("Index", "Home") class="logo">REKREATISTIKA</a>
+    <nav class="right">
+        <a href=@Url.Action("Login", "Account") class="button alt">Uloguj se</a>
+    </nav>
+    <!-- Menu -->
+    <nav id="menu">
+        <ul class="links">
+            <li><a href=@Url.Action("About", "Home")>O stranici</a></li>
+        </ul>
+        <ul class="actions vertical">
+            <li><a href=@Url.Action("Login", "Account") class="button fit">Uloguj se</a></li>
+            <li><a href=@Url.Action("Register", "Account") class="button fit">Registruj se</a></li>
+        </ul>
+    </nav>
+}

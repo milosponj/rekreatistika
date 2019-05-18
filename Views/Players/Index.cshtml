@@ -1,0 +1,38 @@
+﻿@model IEnumerable<Rekreatistika.Models.PlayerViewModels.PlayerDetailsViewModel>
+
+@{
+    ViewData["Title"] = "Pregled igrača";
+}
+
+<h2>Pregled svih igrača</h2>
+<br />
+@if (User.Identity.IsAuthenticated)
+{
+    <p>
+        <a class=button asp-action="Create">Napravi novog igrača</a>
+    </p>
+}
+<br />
+<hr />
+<div id="outer" style="width:100%">
+    <div id="inner">
+        <hr />
+        <table class="table-bordered">
+            <thead>
+                <tr>
+                    <th class="center-cell"></th>
+                    <th class="center-cell">Ime</th>
+                    <th class="center-cell">Nadimak</th>
+                    <th class="center-cell">Email</th>
+                    <th class="center-cell">Starost</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    @Html.Partial("_PlayerTableRow", item)
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

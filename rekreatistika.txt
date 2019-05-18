@@ -1,0 +1,101 @@
+*******LOGGING*********
+Logging into my account:
+1.Open terminal.
+2.ssh root@80.240.20.82
+
+(optional) type in password  - Z!e9!TG#2+o2L6=!
+**********************
+
+****** Installing PostgreSQL *******
+sudo apt update
+sudo apt install postgresql postgresql-contrib
+
+*************************
+
+***** Installing .NET Core ******
+
+sudo add-apt-repository universe
+sudo apt-get install apt-transport-https
+sudo apt-get update
+sudo apt-get install dotnet-sdk-2.2
+*************************
+cd
+******* Installing Git ******
+
+sudo apt-get install git
+************
+
+***** Installing Nginx *****
+sudo apt-get install nginx
+sudo nano /etc/nginx/sites-available/default
+
+set this configuration to the default file:
+server {
+         listen 80;
+         location / {
+             proxy_pass http://localhost:5000;
+             proxy_http_version 1.1;
+             proxy_set_header Upgrade $http_upgrade;
+             proxy_set_header Connection keep-alive;
+             proxy_set_header Host $host;
+             proxy_cache_bypass $http_upgrade;
+         }
+     }
+
+- Place the raw unpublished project files in "/home/[USERNAME]/website" directory
+scp -r /home/milos/Projects/Programming/Rekreatistika root@80.240.20.82:/home/milos/website
+- publish to a good directory
+dotnet publish -c Release -o /var/www/Rekreatistika
+- Create the kestrel service definition file.
+sudo nano /etc/systemd/system/rekreatistika.service
+
+Enter the following into the new service definition file (case sensitive).
+
+     [Unit]
+     Description=Rekreatistika App on Ubuntu
+
+     [Service]
+     WorkingDirectory=/var/www/Rekreatistika
+     ExecStart=/usr/bin/dotnet /var/www/Rekreatistika/Rekreatistika.dll
+     Restart=always
+     RestartSec=10
+     SyslogIdentifier=dotnet-example
+     User=www-data
+     Environment=ASPNETCORE_ENVIRONMENT=Production
+
+     [Install]
+     WantedBy=multi-user.target
+
+- Enable your new service to auto-start on system boot.
+sudo systemctl enable rekreatistika.service
+
+- Reboot the system
+sudo reboot
+
+- Verify that your service is running without error.
+sudo systemctl status rekreatistika.service
+
+- if needed, change the password for postgres user:
+sudo -i - u postgres
+psql
+\password postgres
+
+
+******* DEBUGGIN ***********
+id -u www-data
+--dobijamo id usera koji pokrece server, u ovom slucaju www-data odgovor je 33
+journalctl _UID=33 --since today
+----dobijamo sve logove za www-data
+**********
+
+***** DEPLOY *********
+cd  /home/milos/website/Rekreatistika
+git pull
+sudo systemctl stop rekreatistika.service
+sudo dotnet publish -c Release -o /var/www/Rekreatistika
+sudo systemctl start rekreatistika.service
+
+////publish in development env - sudo dotnet publish -c Debug -o /var/www/Rekreatistika /p:EnvironmentName=Development
+
+****************************
+

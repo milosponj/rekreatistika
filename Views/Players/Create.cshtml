@@ -1,0 +1,76 @@
+﻿@model Rekreatistika.Models.PlayerViewModels.EditPlayerViewModel
+
+@{
+    ViewData["Title"] = "Create";
+}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<h2>Dodaj novog igrača</h2>
+<p style="padding-left:1em;">Samo ime i email su obavezni podaci.</p>
+<hr />
+<div class="row">
+    <div class="col-md-6">
+        <form asp-action="Create" enctype="multipart/form-data">
+            <div class="form-group">
+                <label>Ime i prezime</label>
+                <input asp-for="@Model.Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <div class="row">
+                <div>
+                    <label asp-for="@Model.Avatar" class="button info">Odaberi sliku</label>
+                    <input asp-for="@Model.Avatar" style="visibility:hidden;" type="file" onchange="readURL(this);">
+                </div>
+                <div class="avatar-small">
+                    <img id="player-image" src="/images/thumb_player_avatar.png" class="img-rounded" />
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Nadimak</label>
+                <input asp-for="@Model.Nickname" class="form-control" />
+            </div>
+            <div class="form-group">
+                <label>Email</label>
+                <input asp-for="@Model.Email" class="form-control" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+                <span class="light-text">Korisnik koji je registrovan sa ovim email-om će jedini biti u mogućnosti da mjenja informacije ovog igrača.
+                    U slučaju da ne znate email igrača ostavite svoj email pa ga po potrebi promijenite.</span>
+            </div>
+            <div class="form-group">
+                <label>Datum rođenja</label>
+                <input class="flatpickr" type="text" placeholder="Odaberi datum.." readonly="readonly" id="date-of-birth" name="DateOfBirth">
+            </div>
+            
+            <div class="form-group">
+                <input type="submit" value="Sačuvaj" class="btn btn-default" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="MyStatistics" asp-controller="Account">Nazad na moju rekreatistiku</a>
+</div>
+
+@section Scripts {
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+   
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        function readURL(input) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+
+                reader.onload = function (e) {
+                    $('#player-image')
+                        .attr('src', e.target.result)
+                        .width(64)
+                        .height(64);
+                };
+
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        $("#date-of-birth").flatpickr();
+    </script>
+}

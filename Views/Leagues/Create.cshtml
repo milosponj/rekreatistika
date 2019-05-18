@@ -1,0 +1,119 @@
+﻿@model Rekreatistika.Models.EditLeagueViewModel
+
+@{
+    ViewData["Title"] = "Napravi ligu";
+}
+<head>
+    <link rel="stylesheet" href="/css/multiple-input.css" />
+</head>
+<h2>Napravi novu ligu</h2>
+
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <input type="hidden" asp-for="CurrentUserEmail" id="current-user-email" />
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <div class="form-group">
+                <label>Ime lige</label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <div class="form-group">
+                    <label>Emailovi administratora tima</label>
+                    <input asp-for="LeagueAdminEmails" type="text" id="my_input" />
+                    <span asp-validation-for="LeagueAdminEmails" class="text-danger"></span><br />
+                    <span class="light-text">
+                        Upišite email-ove osoba koje će administrirati ovaj tim.
+                        <br /> Razdvojite ih zarezom ili razmakom.
+                        <br /> Ako ne upišete vaš email, više nećete biti u mogućnosti da mjenjate podatke.
+                    </span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <input type="submit" value="Napravi ligu" class="btn btn-default" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script>
+        (function ($) {
+
+            $.fn.multipleInput = function () {
+                // list of email addresses as unordered list
+                $list = $('<ul />');
+
+                $list.append($('<li class="multipleInput-email"><span> ' + $("#current-user-email").val() + '</span></li>')
+                    .append($('<a href="#" class="multipleInput-close" title="Remove">x</a>')
+                        .click(function (e) {
+                            $(this).parent().remove();
+                            e.preventDefault();
+                        })
+                    )
+                );
+
+                var $input = $('<input type="text" class="form-control"/>').keyup(function (event) {
+
+                    if (event.which == 32 || event.which == 188) {
+                        var val = $(this).val().slice(0, -1); // remove space/comma from value
+
+                        $list.append($('<li class="multipleInput-email"><span> ' + val + '</span></li>')
+                            .append($('<a href="#" class="multipleInput-close" title="Remove">x</a>')
+                                .click(function (e) {
+                                    $(this).parent().remove();
+                                    e.preventDefault();
+                                })
+                            )
+                        );
+                        $(this).attr('placeholder', '');
+                        // empty input
+                        $(this).val('');
+                    }
+
+                });
+
+                // container div
+                var $container = $('<div class="multipleInput-container" id="multipleInput-container"/>').click(function () {
+                    $input.focus();
+                });
+
+                // insert elements into DOM
+                $container.append($list).append($input).insertAfter($(this));
+
+                // add onsubmit handler to parent form to copy emails into original input as csv before submitting
+                var $orig = $(this);
+                $(this).closest('form').submit(function (e) {
+
+                    var emails = new Array();
+                    $('.multipleInput-email span').each(function () {
+                        emails.push($(this).html());
+                    });
+                    emails.push($input.val());
+
+                    $orig.val(emails.join());
+
+                });
+
+                return $(this).hide();
+
+
+
+            };
+        })(jQuery);
+
+        $('#my_input').multipleInput();
+    </script>
+}
+

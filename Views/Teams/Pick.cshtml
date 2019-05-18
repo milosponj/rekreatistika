@@ -1,0 +1,37 @@
+﻿@model System.Collections.Generic.IList<Rekreatistika.Models.PickTeamViewModel>
+
+@{
+    ViewBag.Title = "title";
+    Layout = "_Layout";
+}
+
+<h2>Izaberi tim</h2>
+
+<table class="table">
+    <thead>
+    <tr>
+        <th>
+            Tim
+        </th>
+        <th>
+            Liga
+        </th>
+        <th></th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.League.Name)
+            </td>
+            <td>
+                <a asp-action="PickPlayerInTeam" asp-route-id="@item.Id">Izaberi</a>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>

@@ -1,0 +1,13 @@
+﻿@using Rekreatistika.Helpers
+@model Rekreatistika.Models.TeamViewModels.TeamDetailsViewModel;
+
+<tr>
+    <td class="team-logo-cell">
+        <img src="/images/teams/@Model.ThumbnailPath" alt="Image not found" onerror="this.onerror = null; this.src = '/images/thumb_club_logo.png';" class="img-rounded img-responsive" />
+    </td>
+    <td class="center-cell"><a href=@Url.Action("Details", "Teams", new {id = @Model.TeamId}) style="text-align:center">@Model.TeamName</a> </td>
+    @if (@Html.IsSuperAdmin(User))
+    {
+        <td class="center-cell"> <a href="@Url.Action("Edit", "Teams", new {id = @Model.TeamId})">Izmijeni</a></td>
+    }
+</tr>

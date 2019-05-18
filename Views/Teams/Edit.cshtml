@@ -1,0 +1,160 @@
+﻿@model Rekreatistika.Models.EditTeamViewModel
+
+@{
+    ViewData["Title"] = "Izmijeni tim";
+}
+<head>
+    <link rel="stylesheet" href="/css/multiple-input.css" />
+</head>
+<h2>Izmijeni tim</h2>
+<h3>@Model.Name </h3>
+<hr />
+<div class="row">
+    <div class="col-md-5">
+        <form asp-action="Edit" enctype="multipart/form-data" id="create-team-form">
+            <input type="hidden" asp-for="CurrentUserEmail" id="current-user-email" />
+            <input type="hidden" asp-for="TeamAdminEmails" id="team-admin-emails" />
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label>Ime tima</label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <div class="row">
+                <div>
+                    <label asp-for="@Model.Logo" class="button info">Odaberi logo</label>
+                    <input asp-for="@Model.Logo" style="visibility: hidden;" type="file" onchange="readURL(this);">
+                </div>
+                <div class="avatar-small">
+                    <img id="team-logo" src="/images/teams/@Model.LogoFilename" alt="Image not found" onerror="this.onerror = null;this.src = '/images/thumb_club_logo.png';" class="img-rounded img-responsive" />
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="form-group">
+                    <label>Emailovi administratora tima</label>
+                    <input asp-for="CurrentUserEmail" type="text" id="my_input" />
+                    <span class="light-text">
+                        Upišite email-ove osoba koje će administrirati ovaj tim.
+                        <br /> Razdvojite ih zarezom ili razmakom.
+                        <br /> Ako ne upišete vaš email, više nećete biti u mogućnosti da mjenjate podatke.
+                    </span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <input asp-for="@Model.Logo" type="submit" value="Sačuvaj" class="btn btn-default" />
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        function readURL(input) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+
+                reader.onload = function (e) {
+                    $('#team-logo')
+                        .attr('src', e.target.result)
+                        .width(64)
+                        .height(64);
+                };
+
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        $('form').bind("keypress", function (e) {
+            if (e.keyCode == 13) {
+                e.preventDefault();
+                return false;
+            }
+        });
+
+        (function ($) {
+
+            $.fn.multipleInput = function () {
+                // list of email addresses as unordered list
+                $list = $('<ul />');
+                var adminEmails = $("#team-admin-emails").val().split(',');
+                var i;
+                for (i = 0; i < adminEmails.length; ++i) {
+                    $list.append($('<li class="multipleInput-email"><span> ' + adminEmails[i] + '</span></li>')
+                        .append($('<a href="#" class="multipleInput-close" title="Remove">x</a>')
+                            .click(function (e) {
+                                $(this).parent().remove();
+                                e.preventDefault();
+                            })
+                        )
+                    );
+                }
+          
+                    
+               
+                
+
+                var $input = $('<input type="text" class="form-control"/>').keyup(function (event) {
+
+                    if (event.which == 32 || event.which == 188) {
+                        var val = $(this).val().slice(0, -1); // remove space/comma from value
+
+                        $list.append($('<li class="multipleInput-email"><span> ' + val + '</span></li>')
+                            .append($('<a href="#" class="multipleInput-close" title="Remove">x</a>')
+                                .click(function (e) {
+                                    $(this).parent().remove();
+                                    e.preventDefault();
+                                })
+                            )
+                        );
+                        $(this).attr('placeholder', '');
+                        // empty input
+                        $(this).val('');
+                    }
+
+                });
+
+                // container div
+                var $container = $('<div class="multipleInput-container" id="multipleInput-container"/>').click(function () {
+                    $input.focus();
+                });
+
+                // insert elements into DOM
+                $container.append($list).append($input).insertAfter($(this));
+
+                // add onsubmit handler to parent form to copy emails into original input as csv before submitting
+                var $orig = $(this);
+                $(this).closest('form').submit(function (e) {
+
+                    var emails = new Array();
+                    $('.multipleInput-email span').each(function () {
+                        emails.push($(this).html());
+                    });
+                    emails.push($input.val());
+
+                    $orig.val(emails.join());
+
+                });
+
+                return $(this).hide();
+
+
+
+            };
+        })(jQuery);
+
+        $('#my_input').multipleInput();
+
+        $("#create-team-form").on('submit', function (e) {
+            e.preventDefault();
+            var emails = "";
+            $("#multipleInput-container ul").children('li').each(function () {
+                emails = emails + $(this).first('span')[0].innerText + ",";
+            });
+            $("#team-admin-emails").val(emails);
+            $(this).submit();
+        });
+    </script>
+}

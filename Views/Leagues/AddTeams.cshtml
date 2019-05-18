@@ -1,0 +1,99 @@
+﻿@using System.Security.Cryptography.X509Certificates
+@model Rekreatistika.Models.LeagueViewModels.AddTeamsViewModel
+
+@{
+    ViewBag.Title = "Dodaj timove";
+    Layout = "_Layout";
+}
+<h1 style="text-align:center;">@Model.League.Name</h1>
+
+<div class="outer">
+
+    <div id="outer" style="width:100%">
+        <div class="row">
+            <h3 style="margin-top: 0px; margin-right: 10px;">Pretraži</h3>
+            <input class="search input-sm" placeholder="Pretraži" />
+        </div>
+    </div>
+    <hr />
+    <div id="teams" class="inner">
+        <p>Otkači kvadrat pored tima kojeg želiš dodati u ligu.</p>
+        <form asp-action="AddTeams" id="select-teams-form">
+            @Html.HiddenFor(x => x.LeagueId)
+            @Html.HiddenFor(x => x.SelectedTeamIds)
+
+
+            <table class="table-bordered">
+                <th>Ime ekipe</th>
+                <th></th>
+                <tbody class="list">
+                    @foreach (var team in @Model.TeamsToSelect)
+                    {
+                        <tr>
+                            <td class="born">@team.TeamName</td>
+                            <td class="name">@team.TeamName</td>
+
+                            <td>
+                                <input type="checkbox" id="@team.TeamId" name="team" value="@team.TeamId" />
+                                <label for="@team.TeamId">Odaberi</label>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+            <div class="row">
+                <div></div>
+                <button class="button" type="submit">Dodaj odabrane timove</button>
+                @Html.ValidationMessage("AddingTeamsNumber")
+            </div>
+        </form>
+
+    </div>
+    <hr />
+
+    <div class="inner">
+        <h2 style="text-align:center">Trenutni timovi u ligi</h2>
+        <table class="table-bordered">
+            <th></th>
+            <th>Ime ekipe</th>
+            @foreach (var team in Model.CurrentTeams)
+            {
+                @Html.Partial("_TeamTableRow", team)
+
+            }
+
+        </table>
+    </div>
+    <hr />
+
+    <p style="margin:10px;"> Ako tim kojeg želite dodati nije u listi, napravite novi tim pa ga zatim dodajte u vašu ligu.</p>
+
+    <a class="button" href=@Url.Action("Create", "Teams")>Napravi novi tim</a>
+    <br />
+    <br />
+    <a href=@Url.Action("Details", new {id = @Model.LeagueId})>Vrati se na detalje ove lige</a>
+
+
+</div>
+@section Scripts
+    {
+    <script>
+        var options = {
+            valueNames: ['name', 'born']
+        };
+
+        var userList = new List('teams', options);
+
+
+        $(document).ready(function () {
+            $('#select-teams-form').submit(function () {
+                var teamIds = [];
+                $.each($("input[name='team']:checked"), function () {
+                    teamIds.push($(this).val());
+                });
+                $('#SelectedTeamIds').val(teamIds.join(","))
+                return true; // return false to cancel form action
+            });
+    </script>
+
+}

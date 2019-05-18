@@ -1,0 +1,119 @@
+﻿@using Rekreatistika.Helpers
+@model IndexViewModel
+@using Rekreatistika.Models
+
+@{
+    ViewData["Title"] = "Rekreatistika";
+}
+
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+
+<section id="banner">
+    <div class="content">
+        <h1>Mjesto za vođenje rezultata</h1>
+        <p>Zavedite rezultate s vaših rekreacija. Brzo i jednostavno!</p>
+        <ul class="actions">
+            @if (!SignInManager.IsSignedIn(User))
+            {
+                <li><a href="@(Url.Action("Login", "Account"))" class="button scrolly">Uloguj se</a></li>
+            }
+            else
+            {
+                <li><a href="@(Url.Action("MyStatistics", "Account"))" class="button scrolly">Moja Rekreatistika</a></li>
+            }
+        </ul>
+    </div>
+</section>
+
+
+<section id="one" class="wrapper">
+    <div class="inner flex flex-3">
+        <div class="flex-item left">
+            <div>
+                @if (SignInManager.IsSignedIn(User))
+                {
+                    <h3><a asp-action="Create" asp-controller="Leagues">Dodaj ligu</a></h3>
+                }
+                else
+                {
+                    <h3><a  asp-action="Login" asp-controller="Account">Dodaj ligu</a></h3>
+                }
+                <p>Napravi ligu, dodaj timove.<br /> Zavedi mečeve i rezultate!</p>
+            </div>
+            <div>
+                @if (SignInManager.IsSignedIn(User))
+                {
+                    <h3><a asp-action="Create" asp-controller="Teams">Dodaj tim</a></h3>
+                }
+                else
+                {
+                    <h3><a class="alt"  asp-action="Login" asp-controller="Account">Dodaj tim</a></h3>
+                }
+                <p>Izaberi ime i logo svog tima.<br /> Dodaj igrače i zavedi strijelce tima.</p>
+            </div>
+        </div>
+        <div class="flex-item image fit round">
+            <img src="images/football_field.png" alt="" />
+        </div>
+        <div class="flex-item right">
+            <div>
+            @if (SignInManager.IsSignedIn(User))
+            {
+                <h3><a asp-action="Create" asp-controller="Players">Dodaj igrača</a></h3>
+            }
+            else
+            {
+                <h3><a asp-action="Login" asp-controller="Account">Dodaj igrača</a></h3>
+            }
+                <p>Dodaj igrača koji ima tvoj email.<br/> Brzo pogledaj rezultate njegovih utakmica i njegovu statistiku.</p>
+            </div>
+            <div>
+                <h3><a asp-action="Index" asp-controller="Leagues"> Pregledaj sve lige</a></h3>
+                <p>Pronađi lige koje te interesuju.<br /> Prepoznaj najbolje strijelce i igrače.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div id="outer" style="width:100%">
+    <div id="inner">
+        <section id="latest-matches" class="wrapper">
+            <h3 align="center">Nedavni rezultati</h3>
+            <table class="table-bordered">
+                @foreach (var m in Model.LatestMatches)
+                {
+                    <tr>
+                        @if (m.HomeGoalsCount > m.AwayGoalsCount)
+                        {
+                            <td class="table-cell-winner">@m.HomeTeam.Name</td>
+                        }
+                        else
+                        {
+                            <td>@m.HomeTeam.Name</td>
+                        }
+                        <td><b>@m.HomeGoalsCount</b></td>
+                        <td><b>@m.AwayGoalsCount</b></td>
+                        @if (m.HomeGoalsCount < m.AwayGoalsCount)
+                        {
+                            <td class="table-cell-winner">@m.AwayTeam.Name</td>
+                        }
+                        else
+                        {
+                            <td>@m.AwayTeam.Name</td>
+                        }
+                        <td>@m.Time.ToString("dd MMM yyyy")</td>
+                        <td>
+                            <a class="button" href="@Url.Action("Details", "Leagues", new {id=m.LeagueId})">Pregled lige</a>
+                        </td>
+                        <td>
+                            @m.League.Name
+                        </td>
+                    </tr>
+                }
+
+            </table>
+        </section>
+    </div>
+</div>
+

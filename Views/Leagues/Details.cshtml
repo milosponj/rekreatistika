@@ -1,0 +1,145 @@
+﻿@using Rekreatistika.Models.LeagueViewModels
+@model Rekreatistika.Models.LeagueViewModels.LeagueDetailsViewModel
+
+@{
+    ViewData["Title"] = "Detalji lige";
+}
+
+<br/>
+<h2 class="text-center">@Model.LeagueName</h2>
+<br/>
+<div class="inner">
+    @if (Model.LeagueStats.Count > 0)
+    {
+        <table class="table-bordered">
+            <th>Ime ekipe</th>
+            <th>Pobjeda</th>
+            <th>Izgubljenih</th>
+            <th>Neriješenih</th>
+            <th>Primljeno</th>
+            <th>Postignuto</th>
+            <th>Odigrano</th>
+
+            @foreach (var stat in Model.LeagueStats)
+            {
+            <tr>
+                <td><a href="@Url.Action("Details", "Teams", new {id = @stat.Team.Id})">@stat.Team.Name</a> </td>
+                <td>@stat.MatchesWon</td>
+                <td>@stat.MatchesLost</td>
+                <td>@stat.MatchesDrawn</td>
+                <td>@stat.GoalsConceded</td>
+                <td>@stat.GoalsScored</td>
+                <td>@stat.MatchesPlayed</td>
+            </tr>
+            }
+
+
+            
+
+        </table>
+    }
+    else
+    {
+       
+            <p>   Trenutno nema ekipa u ovoj ligi. Administrator lige ih mora dodati.</p>
+        
+    }
+        @if (@Model.IsAdmin)
+        {
+            <div>
+                <a href=@Url.Action("AddTeams", new {@leagueId = @Model.LeagueId}) class="button">Dodaj novi tim u ligu</a>
+            </div>
+        }
+    </div>
+    <hr />
+    <input type="checkbox" name="yourPropertyName" value="true" checked />
+    <h3 align="center">Mečevi</h3>
+    <div id="outer" style="width:100%">
+        <div id="inner">
+            <table class="table-bordered" style="margin:20px">
+                @foreach (var m in Model.Matches)
+                {
+                    <tr>
+                        @if (m.HomeGoalsCount > m.AwayGoalsCount)
+                        {
+                            <td class="table-cell-winner">@m.HomeTeam.Name</td>
+                        }
+                        else
+                        {
+                            <td>@m.HomeTeam.Name</td>
+                        }
+
+                        <td><b>@m.HomeGoalsCount</b></td>
+                        <td><b>@m.AwayGoalsCount</b></td>
+
+                        @if (m.HomeGoalsCount < m.AwayGoalsCount)
+                        {
+                            <td class="table-cell-winner">@m.AwayTeam.Name</td>
+                        }
+                        else
+                        {
+                            <td>@m.AwayTeam.Name</td>
+                        }
+                        <td>@m.Time.ToString("dd MMM yyyy")</td>
+                        <td>
+                            <button class="trigger-match-details button" data-match-id=@m.Id>Detalji</button>
+                        </td>
+                        @if (Model.IsAdmin)
+                        {
+                            <td><a href=@Url.Action("Edit", "Matches", new {Id = m.Id})>Napravi Promjene</a></td>
+                        }
+                        @if (@m.HomeTeam.TeamAdminEmails.Split(',').Contains(User.Identity.Name) || @m.AwayTeam.TeamAdminEmails.Split(',').Contains(User.Identity.Name))
+                        {
+                            <td><a href=@Url.Action("AddScorers", "Matches", new {Id = m.Id})>Dodaj strijelce</a></td>
+                        }
+                    </tr>
+                }
+
+            </table>
+        </div>
+    </div>
+    @if (User.Identity.IsAuthenticated && (User.IsInRole("LeagueAdmin") || User.IsInRole("SuperAdmin")))
+    {
+        <div>
+            <a href=@Url.Action("CreateMatch", new { leagueId = @Model.LeagueId}) class="button">Novi meč</a>
+        </div>
+    }
+    <hr />
+    <div>
+        <a asp-action="Index" class="button">Vrati se na pregled svih liga</a>
+        @if (User.Identity.IsAuthenticated && (User.IsInRole("LeagueAdmin") || User.IsInRole("SuperAdmin")))
+        {
+            <a asp-action="Edit" asp-route-id="@Model.LeagueId" class="button btn-danger">Izmijeni ligu  </a>
+        }
+    </div>
+
+    @await Html.PartialAsync("_MatchDetails")
+
+    @section Scripts {
+        <script>
+            $(function () {
+                $(".trigger-match-details").click(function () {
+                    var matchId = $(this).data("match-id");
+                    var value = { id: matchId };
+                    $.ajax({
+                        type: "Get",
+                        url: "/Matches/FullDetails",
+                        data: value,
+                        datatype: "html",
+                        success: function (data) {
+                            console.log(data);
+                            fillDetailedMatchStatistics(data.homeTeamName,
+                                data.homeTeamLogoUrl,
+                                data.homeTeamGoalsScored,
+                                data.awayTeamName,
+                                data.awayTeamLogoUrl,
+                                data.awayTeamGoalsScored,
+                                data.time,
+                                data.homeTeamScorers,
+                                data.awayTeamScorers);
+                        }
+                    });
+                });
+            });
+        </script>
+    }

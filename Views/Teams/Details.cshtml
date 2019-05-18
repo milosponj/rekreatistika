@@ -1,0 +1,79 @@
+﻿@model Rekreatistika.Models.TeamViewModels.TeamDetailsViewModel
+
+@{
+    ViewData["Title"] = "Details";
+    var clubLogo = Model.TeamId.ToString() + ".jpg";
+}
+
+<br />
+<div class="inner">
+    <div class="row">
+        <div class="panel panel-default" style="padding: 0;">
+            @if (@Model.IsAdmin)
+            {
+                <a href=@Url.Action("Edit", "Teams", new {id = @Model.TeamId}) class="btn btn-primary" title="Izmijeni"><i class="fa fa-pencil"></i></a>
+            }
+            <div class="panel-body">
+                <div class="col-md-4 col-xs-12 col-sm-4 col-lg-4">
+                    <img src="/images/teams/@clubLogo" alt="Image not found" onerror="this.onerror = null;this.src = '/images/club_logo.png';" class="img-rounded img-responsive" />
+
+                </div>
+                <div class="col-md-8 col-xs-12 col-sm-6 col-lg-8">
+                    <div class="container">
+                        <h2 style="font-weight: bolder">@Model.TeamName</h2>
+                    </div>
+                    <hr>
+                    <ul class="container details">
+                        <li>
+                            <p><span class="glyphicon glyphicon-user one" style="width: 50px;"></span>@Model.Players.Count igrača</p>
+                        </li>
+                    </ul>
+
+                    <hr>
+                    <div class="col-sm-5 col-xs-6 tital ">
+                        @if (!string.IsNullOrEmpty(Model.AdminName))
+                        {
+                            <b>Admin tima: </b>
+                            <a href=@Url.Action("Details", "Players", new {id = @Model.AdminId})></a>
+                        }
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@if (Model.Players.Count > 0)
+{
+    <div id="outer" style="width:100%">
+        <div id="inner">
+            <hr />
+
+            <table id="table_id" class="table-bordered">
+                <thead>
+                    <tr>
+                        <th class="center-cell"></th>
+                        <th class="center-cell">Ime</th>
+                        <th class="center-cell">Nadimak</th>
+                        <th class="center-cell">Email</th>
+                        <th class="center-cell">Starost</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var player in Model.Players)
+                    {
+                        @Html.Partial("_PlayerTableRow", player)
+
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+}
+@if (Model.IsAdmin)
+{
+    <hr />
+    <a class="button" href=@Url.Action("AddPlayers", new {id=@Model.TeamId})>Dodaj nove igrače</a>
+}
+<br /><br /><br />

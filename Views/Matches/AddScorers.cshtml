@@ -1,0 +1,97 @@
+﻿@model Rekreatistika.Models.MatchViewModels.AddGoalsViewModel
+
+@{
+    ViewBag.Title = "Odaberi strijelce";
+    Layout = "_Layout";
+}
+
+<h2>Odaberi strijelce</h2>
+<table>
+    <td><h3>@Model.Match.HomeTeam.Name</h3></td>
+    <td><h3>@Model.Match.HomeGoalsCount</h3></td>
+    <td><h3>@Model.Match.AwayGoalsCount</h3></td>
+    <td><h3>@Model.Match.AwayTeam.Name</h3></td>
+</table>
+
+
+
+<form asp-action="AddScorers" id="add-scorers-form">
+    <input asp-for="MatchId" type="hidden" />
+    <input asp-for="LeagueId" type="hidden" />
+    <input asp-for="HomeTeamId" type="hidden" />
+    <input asp-for="AwayTeamId" type="hidden" />
+    <input asp-for="HomeScorerIds" type="hidden" id="homeScorerIds" />
+    <input asp-for="AwayScorerIds" type="hidden" id="awayScorerIds" />
+    @if (Model.IsHomeTeamAdmin)
+    {
+        <h3>Izaberite golgetere za domaći tim</h3>
+        for (int i = 0; i < Model.Match.HomeGoalsCount; i++)
+        {
+            <div class="form-group">
+                <select class="home-scorers" asp-items=@Model.HomePlayersSelectList>
+                    <option disabled selected>Odaberi</option>
+                </select>
+            </div>
+        }
+
+    }
+    @if (Model.IsAwayTeamAdmin)
+    {
+        <h3>Izaberite golgetere za gostujući tim</h3>
+        for (int i = 0; i < Model.Match.AwayGoalsCount; i++)
+        {
+            <div class="form-group">
+                <select class="away-scorers" asp-items=@Model.AwayPlayersSelectList>
+                    <option disabled selected>Odaberi</option>
+                </select>
+            </div>
+        }
+        
+    }
+    <button type="submit" class="button">Zavrsi sa dodavanjem</button>
+    <br />
+    <a href="@Url.Action("Details", "Leagues", new {id=@Model.Match.LeagueId})">Vrati se na pregled lige</a>
+</form>
+
+@section Scripts{
+    <script>
+        //set up initial scorers
+        $(document).ready(function () {
+            var homeScorersList = $("#homeScorerIds").val().split(",");
+            var awayScorersList = $("#awayScorerIds").val().split(",");
+
+            var homeScorerIds = homeScorersList.map(Number);
+            var awayScorerIds = awayScorersList.map(Number);
+            for (var i = 0; i < homeScorersList.length; i++) {
+                debugger;
+                var selectField = $(".home-scorers").eq(i);
+                selectField.val(homeScorersList[i]);
+            }
+            for (var i = 0; i < awayScorersList.length; i++) {
+                var selectField = $(".away-scorers").eq(i);
+                selectField.val(awayScorersList[i]);
+                debugger;
+            }
+        });
+
+
+
+        //submit form
+        $("#add-scorers-form").on('submit', function (e) {
+            e.preventDefault();
+            var homeScorers = "";
+            $(".home-scorers").each(function () {
+                debugger;
+                homeScorers = homeScorers + $(this).val() + ',';
+            });
+            var awayScorers = "";
+            $(".away-scorers").each(function () {
+                awayScorers = awayScorers + $(this).val() + ',';
+            });
+
+            $("#homeScorerIds").val(homeScorers);
+            $("#awayScorerIds").val(awayScorers);
+            $(this).submit();
+        });
+    </script>
+}

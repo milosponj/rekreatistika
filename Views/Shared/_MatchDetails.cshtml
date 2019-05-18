@@ -1,0 +1,44 @@
+﻿@using Microsoft.AspNetCore.Identity.UI.Pages.Internal
+
+<head>
+    <link rel="stylesheet" href="/css/matchdetails.css" />
+</head>
+
+<div id="match-details-curtain" style="opacity: 0; display: none;">
+    <div id="match-details-container" style="opacity: 0;">
+        <div id="title">STATISTIKA MEČA</div>
+        <div id="teams-container">
+            <div class="homecomming-team flexbox-items">
+                <div class="homecomming-team logo"></div>
+                <br />
+                <div class="homecomming-team name"></div>
+            </div>
+            <div class="flexbox-items">
+                @*<div id="time-of-match"></div> datum je trenutno nepotreban*@
+                <div id="date-of-match"></div>
+                <br />
+                <div id="vs"><div class="circle"></div><hr id="vs-line" /><div class="circle"></div></div>
+            </div>
+            <div class="away-team flexbox-items">
+                <div class="away-team logo" ></div>
+                <br />
+                <div class="away-team name"></div>
+            </div>
+        </div>
+        <div id="score-container">
+                <div class="homecomming-team score"></div>
+                <div class="away-team score"></div>
+        </div>
+        <hr id="bottom-divider" />
+        <div id="close-details"></div>
+        <div id="scorers" style="display: flex;">
+            <div id="home-scorers" style="width: 48%; text-align: right; float: left;">
+
+            </div>
+            <div style="float: left; border-left: 1px solid #22C064; margin-left: 1em; margin-right: 1em;"></div>
+            <div id="away-scorers" style="width: 48%; float: left; text-align: left">
+
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,37 @@
+﻿@model Rekreatistika.Models.League
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h2>Izmijeni ligu</h2>
+
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Id" />
+            <div class="form-group">
+                <label>Ime lige</label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Sačuvaj izmjene" class="btn btn-default" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    @*@if (Model.LeagueIdsForAdmin.Contains(League.Id) || User.IsInRole(CustomRoles.SuperAdmin))
+    {
+        <a asp-action="Edit" asp-route-id="@item.Id">Izmijeni</a><span>|</span>
+    }*@
+    <a asp-action="Index">Nazad na ligu</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

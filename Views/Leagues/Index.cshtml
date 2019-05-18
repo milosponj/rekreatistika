@@ -1,0 +1,44 @@
+﻿@using Rekreatistika
+@model Rekreatistika.Models.LeagueViewModels.LeagueIndexViewModel
+
+@{
+    ViewData["Title"] = "Pregled svih liga";
+}
+
+<h2>Pregled svih liga</h2>
+
+<div id="outer" style="width:100%">
+    <div id="inner">
+        <hr />
+        <table class="table-bordered">
+            <thead>
+                <tr>
+                    <th>
+                        Ime
+                    </th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Leagues)
+                {
+                    <tr style="height:50px;">
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Name)
+                        </td>
+                        <td>
+                            <a asp-action="Details" asp-route-id="@item.Id">Pregled lige</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        </div>
+    </div>
+        @if (User.Identity.IsAuthenticated)
+        {
+            <p>
+                <a asp-action="Create" class="button">Napravi novu ligu</a>
+            </p>
+        }
+

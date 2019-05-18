@@ -1,0 +1,16 @@
+﻿@using Rekreatistika.Helpers
+@model Rekreatistika.Models.PlayerViewModels.PlayerDetailsViewModel
+
+<tr>
+    <td class="player-avatar">
+        <img src="/images/players/@Model.ThumbnailPath" alt="Image not found" onerror="this.onerror = null; this.src = '/images/thumb_player_avatar.png';" class="img-rounded img-responsive" />
+    </td>
+    <td class="center-cell"><a href=@Url.Action("Details", "Players", new {id = @Model.Id}) style="text-align:center">@Model.Name</a> </td>
+    <td class="center-cell"><p>@Model.Nickname </p></td>
+    <td class="center-cell"><p>@Model.Email</p> </td>
+    <td class="center-cell">@Model.Age</td>
+    @if (@Html.IsSuperAdmin(User))
+    {
+        <td class="center-cell"> <a href="@Url.Action("Edit", "Players", new {id = @Model.Id})">Izmijeni</a></td>
+    }
+</tr>

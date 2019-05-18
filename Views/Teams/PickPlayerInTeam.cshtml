@@ -1,0 +1,43 @@
+﻿@model System.Collections.Generic.List<Rekreatistika.Models.Player>
+
+@{
+    ViewBag.Title = "title";
+    Layout = "_Layout";
+}
+
+<h2>Izaberite koji ste igrač</h2>
+<p> Za ovog igrača ćete imati mogućnost dobijanja mjesečne statistike. Moguće je izabrati samo jednog igrača. </p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Ime igrača
+            </th>
+            <th>
+                Nadimak
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Nickname)
+                </td>
+                    <td>
+
+                            using (@Html.BeginForm("ConnectAccountWithPlayer", "Account", FormMethod.Post))
+                            {
+                                @Html.Hidden("playerId", item.Id)
+                                <button class="btn-primary" type="submit">Izaberi</button>
+                            }
+                    </td>
+            </tr>
+        }
+    </tbody>
+</table>

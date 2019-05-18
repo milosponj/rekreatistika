@@ -1,0 +1,75 @@
+﻿@model Rekreatistika.Models.TeamViewModels.AddPlayersViewModel
+
+@{
+    ViewBag.Title = "Dodaj igrače";
+    Layout = "_Layout";
+}
+<br />
+<div class="row">
+    <div class="col-md-6">
+        <h1 style="text-align: right;">@Model.TeamName</h1>
+    </div>
+</div>
+
+<hr />
+
+<div id="players">
+    <div class="row">
+        <h3 style="margin-top: 0px; margin-right: 10px;">Pretraži</h3>
+        <input class="search input-sm" placeholder="Search" />
+    </div>
+    <form asp-action="AddPlayers" id="select-players-form">
+        @Html.HiddenFor(x => x.TeamId)
+        @Html.HiddenFor(x => x.SelectedPlayerIds)
+        <table>
+            <tbody class="list">
+                @foreach (var player in @Model.PlayersToSelect)
+                {
+                    <tr>
+                        <td class="name">@player.Name</td>
+                        <td class="born">@player.Nickname</td>
+                        <td>
+                            <input type="checkbox" id="@player.Id" name="player" value="@player.Id" />
+                            <label for="@player.Id">Odaberi</label>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        <button class="button" type="submit">Dodaj odabrane igrače</button>
+        @Html.ValidationMessage("AddingPlayersNumber")
+    </form>
+
+</div>
+
+<div>
+    <a class="button btn-danger" asp-action="Create" asp-controller="Players">Napravi novog igrača</a>
+</div>
+<hr />
+<div>
+    <a asp-action="Details" asp-route-id="@Model.TeamId">Vrati se na pregled tima</a>
+</div>
+@section Scripts{
+    <script>
+        var options = {
+            valueNames: ['name', 'born']
+        };
+
+        var userList = new List('players', options);
+
+
+        $(document).ready(function () {
+            $('#select-players-form').submit(function () {
+                var playerIds = [];
+                $.each($("input[name='player']:checked"), function () {
+                    playerIds.push($(this).val());
+                });
+                $('#SelectedPlayerIds').val(playerIds.join(","));
+                return true; // return false to cancel form action
+            });
+
+        });
+    </script>
+
+
+}

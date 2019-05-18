@@ -1,0 +1,147 @@
+﻿@model Rekreatistika.Models.AccountViewModels.MyStatisticsViewModel
+
+@{
+    ViewData["Title"] = "Detalji igrača";
+    string avatarPath = "";
+    if (@Model.Player != null)
+    {
+        avatarPath = @Model.Player.Id + ".png";
+    }
+}
+<div class="container">
+    <div class="row">
+        <div class="col-6 col-md-offset-2">
+            <a class="button btn-warning" href="@Url.Action("Create", "Leagues")">Napravi novu ligu</a>
+            <a class="button btn-warning" href="@Url.Action("Create", "Teams")">Napravi novi tim</a>
+            <a class="button btn-warning" href="@Url.Action("Create", "Players")">Napravi novog igrača</a>
+        </div>
+    </div>
+</div>
+@if (@Model.Player != null)
+{
+    <div class="inner">
+        <div class="row">
+            <div class="panel panel-default" style="padding: 0; width:100%">
+                <div class="panel-body">
+                    <div class="col-md-4 col-xs-12 col-sm-4 col-lg-4">
+                        <a asp-action="Details" asp-controller="Players" asp-route-id="@Model.Player.Id">
+                            <img src="/images/players/@Model.Player.AvatarPath" alt="Image not found" onerror="this.onerror = null;this.src = '/images/player_avatar.png';" class="img-rounded img-responsive" />
+                        </a>
+                    </div>
+                    <div class="col-md-8 col-xs-12 col-sm-6 col-lg-8">
+                        <div class="container">
+                            <h2><a asp-action="Details" asp-controller="Players" asp-route-id="@Model.Player.Id">@Model.Player.Name</a></h2>
+                            <p>@Model.Player.Nickname</p>
+
+
+                        </div>
+                        <hr>
+                        <ul class="container details">
+                            <li>
+                                <p><span class="glyphicon glyphicon-user one" style="width: 50px;"></span>@String.Format("{0:dd MMM yyyy}", @Model.Player.DateOfBirth)</p>
+                            </li>
+                            @if (!string.IsNullOrEmpty(@Model.Email))
+                            {
+                                <li>
+                                    <p><span class="glyphicon glyphicon-envelope one" style="width: 50px;"></span>@Model.Email</p>
+                                </li>
+                            }
+                            else
+                            {
+                                <li>
+                                    <p><span class="glyphicon glyphicon-envelope one" style="width: 50px;"></span>Nije upisan email</p>
+                                </li>
+                            }
+                        </ul>
+                        <hr>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@*Players*@
+@if (@Model.MyPlayers.Count > 1)
+{
+    <h3>Igrači koje ja administriram:</h3>
+    <div class="outer">
+        <div class="inner">
+            <table class="table-bordered">
+                @foreach (var player in Model.MyPlayers)
+                {
+                    @Html.Partial("_PlayerTableRow", player)
+
+                }
+            </table>
+        </div>
+    </div>
+}
+
+@*Teams*@
+@if (@Model.MyTeams.Count > 0)
+{
+    <hr />
+    <h3>Timovi koje ja administriram:</h3>
+
+    foreach (var team in Model.MyTeams)
+    {
+        <a class="button" href="@Url.Action("Details", "Teams", new {id = team.Id})"> @team.Name</a>
+        <br />
+    }
+
+
+}
+
+@*Leagues*@
+@if (@Model.MyLeagues.Count > 0)
+{
+    <hr />
+    <h3>Lige koje ja administriram:</h3>
+    foreach (var league in Model.MyLeagues)
+    {
+        <a class="button" href="@Url.Action("Details", "Leagues", new {id = league.Id})"> @league.Name</a>
+        <br />
+    }
+
+}
+<hr />
+@*Matches*@
+@if (@Model.MyMatches.Count > 0)
+{
+    <h3 align="center">Mečevi timova čiji sam član</h3>
+    <div id="outer" style="width:100%">
+        <div id="inner">
+            <table class="table-bordered">
+                @foreach (var m in Model.MyMatches)
+                {
+                    <tr>
+                        @if (m.HomeGoalsCount > m.AwayGoalsCount)
+                        {
+                            <td class="table-cell-winner">@m.HomeTeam.Name</td>
+                        }
+                        else
+                        {
+                            <td>@m.HomeTeam.Name</td>
+                        }
+                        <td>@m.HomeGoalsCount</td>
+                        <td>@m.AwayGoalsCount</td>
+                        @if (m.HomeGoalsCount < m.AwayGoalsCount)
+                        {
+                            <td class="table-cell-winner">@m.AwayTeam.Name</td>
+                        }
+                        else
+                        {
+                            <td>@m.AwayTeam.Name</td>
+                        }
+                        <td>@m.Time.ToString("dddd, dd MMMM yyyy")</td>
+                        <td>
+                            <a class="button" href="@Url.Action("Details", "Leagues", new {id = m.LeagueId})">Detalji lige</a>
+                        </td>
+                    </tr>
+                }
+
+            </table>
+        </div>
+    </div>
+}
