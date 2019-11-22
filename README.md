@@ -1,5 +1,10 @@
 # Rekreatistika
-A .NET Core MVC project that's designed to log results and scorers of sport games. It uses .NET Core's built-in Dependency Injection, logging with Entity Framework Core and Identity using PostgreSQL
+A .NET Core MVC project that's designed to log results and scorers of sport games. It uses 
+
+- .NET Core's built-in Dependency Injection
+- Entity Framework Core
+- ASP.NET Identity using PostgreSQL
+
 The project was developed with code-first approach, using standard migrations.
 
 For easier setup SQLite is currently used but that can be changed by uncommenting 
